@@ -1,0 +1,28 @@
+package com.mercatosys.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+@Entity
+@Table(name = "products")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Le nom du produit est obligatoire")
+    private String name;
+
+    @Positive(message = "Le prix doit être > 0")
+    private double price;
+
+    @NotBlank(message = "La catégorie est obligatoire")
+    private String category;
+
+    @PositiveOrZero(message = "Le stock doit être >= 0")
+    private int stock;
+}
