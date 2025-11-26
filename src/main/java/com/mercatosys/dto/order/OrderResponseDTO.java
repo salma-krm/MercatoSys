@@ -1,6 +1,7 @@
 package com.mercatosys.dto.order;
 
 import com.mercatosys.dto.orderItem.OrderItemResponseDTO;
+import com.mercatosys.dto.payment.PaymentResponseDTO;
 import com.mercatosys.dto.promocode.PromoCodeResponseDTO;
 import lombok.*;
 import java.time.LocalDateTime;

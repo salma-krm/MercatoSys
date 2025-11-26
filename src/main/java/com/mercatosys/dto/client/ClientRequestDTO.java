@@ -3,7 +3,11 @@ package com.mercatosys.dto.client;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClientRequestDTO {
 
     @NotBlank(message = "Le nom d'utilisateur est obligatoire")
@@ -16,7 +20,6 @@ public class ClientRequestDTO {
     @NotBlank(message = "L'email est obligatoire")
     private String email;
 
-    // Champs spécifiques Client
     @NotBlank(message = "Le prénom est obligatoire")
     private String firstName;
 

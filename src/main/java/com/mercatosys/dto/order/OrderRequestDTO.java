@@ -1,6 +1,7 @@
 package com.mercatosys.dto.order;
 
 import com.mercatosys.dto.orderItem.OrderItemRequestDTO;
+import com.mercatosys.dto.payment.PaymentRequestDTO;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.util.List;
