@@ -9,8 +9,11 @@ import lombok.*;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
