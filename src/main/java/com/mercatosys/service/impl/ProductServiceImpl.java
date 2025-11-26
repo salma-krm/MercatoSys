@@ -30,6 +30,7 @@ public class ProductServiceImpl  implements ProductService {
 
     @Override
     public List<ProductResponseDTO> getAll() {
-        return List.of();
+
+        return null;
     }
 }
