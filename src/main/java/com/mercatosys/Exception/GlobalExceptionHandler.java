@@ -43,14 +43,14 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    // ⚙️ 400 - Business logic error
+    //  400 - Business logic error
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
         log.warn("Business error: {}", ex.getMessage());
         return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    // 🧾 400 - Validation errors (DTO @Valid)
+    //  400 - Validation errors (DTO @Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         log.error("Validation error: {}", ex.getMessage());
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    // ⚠️ Runtime exceptions non prévues
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException ex) {
         log.error("Unexpected runtime error: {}", ex.getMessage(), ex);

@@ -1,4 +1,4 @@
-package com.mercatosys.controllers;
+package com.mercatosys.controller;
 
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
