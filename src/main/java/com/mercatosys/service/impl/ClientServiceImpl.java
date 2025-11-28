@@ -9,7 +9,7 @@ import com.mercatosys.entity.User;
 import com.mercatosys.mapper.ClientMapper;
 import com.mercatosys.repositories.ClientRepository;
 import com.mercatosys.repositories.UserRepository;
-import com.mercatosys.service.ClientService;
+import com.mercatosys.service.interfaces.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

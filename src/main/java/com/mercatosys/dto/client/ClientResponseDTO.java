@@ -13,5 +13,6 @@ public class ClientResponseDTO {
     private String lastName;
     private String phone;
     private String address;
-    private Long userId; // <-- correspond à Client.user.id
+    private Long userId;
+    private int  totalOrder ;
 }

@@ -10,7 +10,7 @@ import com.mercatosys.enums.Role;
 import com.mercatosys.mapper.ClientMapper;
 import com.mercatosys.repositories.ClientRepository;
 import com.mercatosys.repositories.UserRepository;
-import com.mercatosys.service.AuthService;
+import com.mercatosys.service.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

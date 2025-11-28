@@ -3,7 +3,7 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
 import com.mercatosys.dto.client.ClientUpdateDTO;
-import com.mercatosys.service.ClientService;
+import com.mercatosys.service.interfaces.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

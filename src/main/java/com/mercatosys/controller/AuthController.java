@@ -3,7 +3,7 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
 import com.mercatosys.dto.user.LoginRequestDTO;
-import com.mercatosys.service.AuthService;
+import com.mercatosys.service.interfaces.AuthService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

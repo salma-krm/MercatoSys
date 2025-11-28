@@ -1,4 +1,4 @@
-package com.mercatosys.service;
+package com.mercatosys.service.interfaces;
 
 import com.mercatosys.dto.user.UserRequestDTO;
 import com.mercatosys.dto.user.UserResponseDTO;

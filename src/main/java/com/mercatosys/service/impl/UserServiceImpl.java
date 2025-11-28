@@ -7,7 +7,7 @@ import com.mercatosys.dto.user.UserUpdateDTO;
 import com.mercatosys.entity.User;
 import com.mercatosys.mapper.UserMapper;
 import com.mercatosys.repositories.UserRepository;
-import com.mercatosys.service.UserService;
+import com.mercatosys.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

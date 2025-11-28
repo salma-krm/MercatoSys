@@ -1,4 +1,5 @@
 package com.mercatosys.dto.payment;
+import com.mercatosys.enums.PaymentMethod;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -10,4 +11,6 @@ public class PaymentResponseDTO {
     private String method;
     private double amount;
     private LocalDateTime paidAt;
+    private PaymentMethod methode ;
+    private LocalDateTime paymentDate ;
 }

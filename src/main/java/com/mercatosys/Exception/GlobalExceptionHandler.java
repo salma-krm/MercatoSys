@@ -15,6 +15,11 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+    @ExceptionHandler(StockException.class)
+    public ResponseEntity<ErrorResponse> handleStock(StockException ex) {
+        log.warn("Stock error: {}", ex.getMessage());
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
 
     @ExceptionHandler(UnauthorizedException.class)

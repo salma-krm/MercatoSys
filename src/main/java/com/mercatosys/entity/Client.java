@@ -1,8 +1,10 @@
 package com.mercatosys.entity;
 
+import com.mercatosys.enums.CustomerLevel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
 @Entity
 @Table(name = "clients")
 @Getter
@@ -34,5 +36,9 @@ public class Client {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
+    @Enumerated(EnumType.STRING)
+    private CustomerLevel level = CustomerLevel.BASIC;
+    private int  totalOrder = 0 ;
 
 }
