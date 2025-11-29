@@ -22,13 +22,17 @@ public class PromoCodeServiceImpl implements PromoCodeService {
     @Override
     public PromoCodeResponseDTO create(PromoCodeRequestDTO dto) {
 
-        if (repo.existsByCode(dto.getCode())) {
-            throw new DuplicateResourceException("Le code promo existe déjà : " + dto.getCode());
+
+        if (repo.existsByCodeAndActiveTrue(dto.getCode())) {
+            throw new DuplicateResourceException(
+                    "Le code promo existe déjà : " + dto.getCode()
+            );
         }
 
         PromoCode promo = mapper.toEntity(dto);
-        repo.save(promo);
+        promo.setActive(true);
 
+        repo.save(promo);
         return mapper.toDTO(promo);
     }
 
@@ -36,14 +40,16 @@ public class PromoCodeServiceImpl implements PromoCodeService {
     public PromoCodeResponseDTO update(Long id, PromoCodeUpdateDTO dto) {
 
         PromoCode promo = repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("PromoCode introuvable avec ID = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "PromoCode introuvable avec ID = " + id
+                ));
 
-        // Vérifier unicité du code SI le code change
         if (dto.getCode() != null &&
                 !dto.getCode().equals(promo.getCode()) &&
-                repo.existsByCode(dto.getCode())) {
-
-            throw new IllegalArgumentException("Un autre code promo existe déjà avec le code : " + dto.getCode());
+                repo.existsByCodeAndActiveTrue(dto.getCode())) {
+            throw new DuplicateResourceException(
+                    "Un autre code promo actif utilise déjà : " + dto.getCode()
+            );
         }
 
         mapper.updateEntityFromDto(dto, promo);
@@ -54,15 +60,22 @@ public class PromoCodeServiceImpl implements PromoCodeService {
 
     @Override
     public PromoCodeResponseDTO getById(Long id) {
+
         PromoCode promo = repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("PromoCode introuvable avec ID = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "PromoCode introuvable avec ID = " + id
+                ));
+
+        if (!promo.getActive()) {
+            throw new ResourceNotFoundException("Ce code promo est désactivé.");
+        }
 
         return mapper.toDTO(promo);
     }
 
     @Override
     public List<PromoCodeResponseDTO> getAll() {
-        return repo.findAll()
+        return repo.findAllByActiveTrue()
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
@@ -70,9 +83,13 @@ public class PromoCodeServiceImpl implements PromoCodeService {
 
     @Override
     public void delete(Long id) {
-        if (!repo.existsById(id)) {
-            throw new ResourceNotFoundException("PromoCode introuvable avec ID = " + id);
-        }
-        repo.deleteById(id);
+
+        PromoCode promo = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "PromoCode introuvable avec ID = " + id
+                ));
+
+        promo.setActive(false); // soft delete via active
+        repo.save(promo);
     }
 }

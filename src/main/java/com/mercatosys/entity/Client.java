@@ -18,13 +18,11 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Le prénom est obligatoire")
-    @Column(nullable = false)
-    private String firstName;
+
 
     @NotBlank(message = "Le nom est obligatoire")
     @Column(nullable = false)
-    private String lastName;
+    private String name;
 
     @Column(length = 20)
     private String phone;
@@ -38,7 +36,13 @@ public class Client {
 
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private CustomerLevel level = CustomerLevel.BASIC;
-    private int  totalOrder = 0 ;
+
+    @Builder.Default
+    private int totalOrder = 0;
+
+    @Builder.Default
+    private double totalSpent = 0.0;
 
 }

@@ -8,10 +8,10 @@ public class PromoCodeResponseDTO {
 
     private Long id;
     private String code;
-    private boolean deleted;
     private Double discountPercentage;
     private Double discountAmount;
     private LocalDateTime expirationDate;
-    private boolean active;
+    private Boolean active;
     private Double minimumOrderAmount;
+    private Boolean used;
 }

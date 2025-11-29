@@ -4,14 +4,10 @@ import com.mercatosys.Exception.ResourceNotFoundException;
 import com.mercatosys.dto.order.OrderRequestDTO;
 import com.mercatosys.dto.order.OrderResponseDTO;
 import com.mercatosys.dto.orderItem.OrderItemRequestDTO;
-import com.mercatosys.dto.payment.PaymentRequestDTO;
 import com.mercatosys.entity.*;
 import com.mercatosys.enums.CustomerLevel;
 import com.mercatosys.enums.OrderStatus;
-import com.mercatosys.enums.PaymentMethod;
 import com.mercatosys.mapper.OrderMapper;
-
-
 import com.mercatosys.repositories.*;
 import com.mercatosys.service.interfaces.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -31,55 +27,51 @@ public class OrderServiceImpl implements OrderService {
     private final ClientRepository clientRepository;
     private final ProductRepository productRepository;
     private final PromoCodeRepository promoCodeRepository;
-    private final PaymentRepository paymentRepository;
-
     private final OrderMapper orderMapper;
 
-    // TVA fixe depuis application.properties
     @Value("${app.tva.rate}")
-    private double tvaRate; // exemple 0.20
+    private double tvaRate;
 
-    // ----------------- CREATE ORDER -----------------
     @Transactional
     @Override
     public OrderResponseDTO createOrder(OrderRequestDTO dto) {
-
-        // 1️⃣ Vérifier client
         Client client = clientRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client " + dto.getClientId() + " introuvable"));
 
-        // 2️⃣ Vérifier code promo si fourni
         PromoCode promoCode = null;
         if (dto.getPromoCodeId() != null) {
             promoCode = promoCodeRepository.findById(dto.getPromoCodeId())
                     .orElseThrow(() -> new ResourceNotFoundException("PromoCode " + dto.getPromoCodeId() + " introuvable"));
-            if (!promoCode.isActive()) {
+            if (!promoCode.getActive())
                 throw new IllegalStateException("Le code promo est désactivé");
-            }
+            if (orderRepository.existsByPromoCodeId(promoCode.getId()))
+                throw new IllegalStateException("Le code promo a déjà été utilisé");
+            if (promoCode.getExpirationDate().isBefore(LocalDateTime.now()))
+                throw new IllegalStateException("Le code promo est expiré");
         }
 
-        // 3️⃣ Créer la commande
         Order order = Order.builder()
                 .client(client)
                 .promoCode(promoCode)
                 .createdAt(LocalDateTime.now())
                 .status(OrderStatus.PENDING)
                 .items(new ArrayList<>())
-                .payments(new ArrayList<>())
                 .build();
 
         double totalHT = 0;
         List<OrderItem> orderItems = new ArrayList<>();
 
-        // 4️⃣ Vérifier stock et créer les OrderItems
         for (OrderItemRequestDTO itemDTO : dto.getItems()) {
             Product product = productRepository.findById(itemDTO.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Produit " + itemDTO.getProductId() + " introuvable"));
 
             if (product.getStock() < itemDTO.getQuantity()) {
                 order.setStatus(OrderStatus.REJECTED);
-                return orderMapper.toDTO(order); // stock insuffisant
+                return orderMapper.toDTO(order);
             }
+
+            product.setStock(product.getStock() - itemDTO.getQuantity());
+            productRepository.save(product);
 
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
@@ -95,22 +87,13 @@ public class OrderServiceImpl implements OrderService {
 
         order.setItems(orderItems);
 
-        // 5️⃣ Calcul remises
-        double discount = 0;
+        double discount = calculateLoyaltyDiscount(client.getLevel(), totalHT);
 
-        // Remise fidélité selon niveau client (applique seulement si ce n’est pas la 1ère commande)
-        if (client.getTotalOrder() > 0) {
-            discount += calculateLoyaltyDiscount(client.getLevel(), totalHT);
-        }
-
-        // Code promo
         if (promoCode != null) {
-            if (promoCode.getDiscountPercentage() != null) {
+            if (promoCode.getDiscountPercentage() != null)
                 discount += totalHT * (promoCode.getDiscountPercentage() / 100.0);
-            }
-            if (promoCode.getDiscountAmount() != null) {
+            if (promoCode.getDiscountAmount() != null)
                 discount += promoCode.getDiscountAmount();
-            }
         }
 
         double totalAfterDiscount = totalHT - discount;
@@ -121,27 +104,11 @@ public class OrderServiceImpl implements OrderService {
         order.setDiscountApplied(discount);
         order.setTotalTTC(totalTTC);
 
-        // 6️⃣ Paiements
-        List<Payment> payments = new ArrayList<>();
-        if (dto.getPayments() != null) {
-            for (PaymentRequestDTO pay : dto.getPayments()) {
-                Payment payment = Payment.builder()
-                        .order(order)
-                        .amount(pay.getAmount())
-                        .method(PaymentMethod.valueOf(pay.getMethod().toUpperCase()))
-                        .paymentDate(LocalDateTime.now())
-                        .build();
-                payments.add(payment);
-            }
-        }
-        order.setPayments(payments);
-
         orderRepository.save(order);
 
         return orderMapper.toDTO(order);
     }
 
-    // ----------------- CONFIRM ORDER -----------------
     @Transactional
     @Override
     public OrderResponseDTO confirmOrder(Long orderId) {
@@ -152,22 +119,19 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalStateException("La commande n'est pas en statut PENDING");
         }
 
-        // Vérifier que la commande est totalement payée
-        double totalPaid = order.getPayments().stream().mapToDouble(Payment::getAmount).sum();
-        if (totalPaid < order.getTotalTTC()) {
-            throw new IllegalStateException("La commande n'est pas totalement payée");
-        }
+        double totalPaid = order.getPayments().stream()
+                .mapToDouble(Payment::getAmount)
+                .sum();
 
-        // Décrémenter stock
-        for (OrderItem item : order.getItems()) {
-            Product product = item.getProduct();
-            product.setStock(product.getStock() - item.getQuantity());
-            productRepository.save(product);
+        totalPaid = Math.round(totalPaid * 100.0) / 100.0;
+        double totalTTC = Math.round(order.getTotalTTC() * 100.0) / 100.0;
+
+        if (totalPaid < totalTTC) {
+            throw new IllegalStateException("La commande n'est pas totalement payée");
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
 
-        // Mettre à jour statistiques client
         Client client = order.getClient();
         client.setTotalOrder(client.getTotalOrder() + 1);
         updateCustomerLevel(client);
@@ -177,7 +141,6 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDTO(order);
     }
 
-    // ----------------- CANCEL ORDER -----------------
     @Transactional
     @Override
     public OrderResponseDTO cancelOrder(Long orderId) {
@@ -185,7 +148,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Commande " + orderId + " introuvable"));
 
         if (order.getStatus() == OrderStatus.CONFIRMED) {
-            // Rendre le stock
             for (OrderItem item : order.getItems()) {
                 Product product = item.getProduct();
                 product.setStock(product.getStock() + item.getQuantity());
@@ -195,58 +157,46 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
+
         return orderMapper.toDTO(order);
     }
 
-    // ----------------- UTILS -----------------
     private double calculateLoyaltyDiscount(CustomerLevel level, double totalHT) {
-        switch (level) {
-            case SILVER:
-                return totalHT >= 500 ? totalHT * 0.05 : 0;
-            case GOLD:
-                return totalHT >= 800 ? totalHT * 0.10 : 0;
-            case PLATINUM:
-                return totalHT >= 1200 ? totalHT * 0.15 : 0;
-            default:
-                return 0;
-        }
+        return switch (level) {
+            case SILVER -> totalHT >= 500 ? totalHT * 0.05 : 0;
+            case GOLD -> totalHT >= 800 ? totalHT * 0.10 : 0;
+            case PLATINUM -> totalHT >= 1200 ? totalHT * 0.15 : 0;
+            default -> 0;
+        };
     }
 
     @Transactional
     protected void updateCustomerLevel(Client client) {
-        int totalOrders = client.getTotalOrder(); // عدد الطلبات المؤكدة
-
-        // 1️⃣ حساب إجمالي المبلغ المصروف للعميل من كل الطلبات المؤكدة
+        int totalOrders = client.getTotalOrder();
         Double totalSpent = orderRepository.sumConfirmedOrdersByClient(client.getId());
         if (totalSpent == null) totalSpent = 0.0;
 
-        // 2️⃣ تحديث مستوى العميل حسب القواعد
-        if (totalOrders >= 20 || totalSpent >= 15000) {
+        if (totalOrders >= 20 || totalSpent >= 15000)
             client.setLevel(CustomerLevel.PLATINUM);
-        } else if (totalOrders >= 10 || totalSpent >= 5000) {
+        else if (totalOrders >= 10 || totalSpent >= 5000)
             client.setLevel(CustomerLevel.GOLD);
-        } else if (totalOrders >= 3 || totalSpent >= 1000) {
+        else if (totalOrders >= 3 || totalSpent >= 1000)
             client.setLevel(CustomerLevel.SILVER);
-        } else {
+        else
             client.setLevel(CustomerLevel.BASIC);
-        }
-
-        // 3️⃣ تحديث العميل في قاعدة البيانات
-        clientRepository.save(client);
     }
 
     @Override
     public OrderResponseDTO getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
+        return orderRepository.findById(id)
+                .map(orderMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande " + id + " introuvable"));
-        return orderMapper.toDTO(order);
     }
 
     @Override
     public List<OrderResponseDTO> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
         List<OrderResponseDTO> list = new ArrayList<>();
-        for (Order o : orders) {
+        for (Order o : orderRepository.findAll()) {
             list.add(orderMapper.toDTO(o));
         }
         return list;

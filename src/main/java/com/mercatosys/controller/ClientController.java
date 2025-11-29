@@ -21,13 +21,13 @@ public class ClientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientResponseDTO createClient(@Valid @RequestBody ClientRequestDTO dto) {
-        return clientService.create(dto);
-    }
+//    public ClientResponseDTO createClient(@Valid @RequestBody ClientRequestDTO dto) {
+//        return clientService.create(dto);
+//    }
 
     @PutMapping("/{id}")
     public ClientResponseDTO updateClient(@PathVariable Long id,
-                                          @Valid @RequestBody ClientUpdateDTO dto) {
+                                          @Valid @RequestBody ClientRequestDTO dto) {
         return clientService.update(id, dto);
     }
 

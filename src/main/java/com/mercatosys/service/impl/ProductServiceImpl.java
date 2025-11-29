@@ -54,7 +54,9 @@ public class ProductServiceImpl implements ProductService {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Produit introuvable: " + id);
         }
+
         productRepository.deleteById(id);
+
     }
 
     @Override

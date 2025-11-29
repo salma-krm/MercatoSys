@@ -23,27 +23,15 @@ public class ClientServiceImpl implements ClientService {
     private final UserRepository userRepository;
     private final ClientMapper clientMapper;
 
-    @Override
-    public ClientResponseDTO create(ClientRequestDTO dto) {
 
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User"));
-
-        Client client = clientMapper.toEntity(dto);
-        client.setUser(user);
-
-        client = clientRepository.save(client);
-
-        return clientMapper.toResponseDTO(client);
-    }
 
     @Override
-    public ClientResponseDTO update(Long id, ClientUpdateDTO dto) {
+    public ClientResponseDTO update(Long id, ClientRequestDTO dto) {
 
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client"));
 
-        clientMapper.updateEntityFromDTO(dto, client);
+        clientMapper.updateEntityFromDTO( dto, client);
 
         client = clientRepository.save(client);
 

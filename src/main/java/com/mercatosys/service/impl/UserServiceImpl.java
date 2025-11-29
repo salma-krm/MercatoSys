@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO update(Long id, UserUpdateDTO dto) {
+    public UserResponseDTO update(Long id, UserRequestDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User introuvable avec l'id: " + id));
-        userMapper.updateEntity( user,dto);
+        userMapper.updateEntityFromDTO(dto,user);
         user = userRepository.save(user);
         return userMapper.toResponseDTO(user);
     }

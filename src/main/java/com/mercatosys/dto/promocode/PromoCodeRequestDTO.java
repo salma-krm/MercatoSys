@@ -8,20 +8,26 @@ import java.time.LocalDateTime;
 public class PromoCodeRequestDTO {
 
     @NotBlank(message = "Le code promo est obligatoire")
+    @Pattern(
+            regexp = "PROMO-[A-Z0-9]{4}",
+            message = "Format invalide : doit être PROMO-XXXX"
+    )
     private String code;
 
-    @PositiveOrZero(message = "Le pourcentage doit être >= 0")
-    @Max(value = 100, message = "Le pourcentage ne peut pas dépasser 100")
+    @PositiveOrZero
+    @Max(100)
     private Double discountPercentage;
 
-    @PositiveOrZero(message = "Le montant de réduction doit être >= 0")
+    @PositiveOrZero
     private Double discountAmount;
 
-    @Future(message = "La date d’expiration doit être future")
+    @Future
     private LocalDateTime expirationDate;
 
-    private boolean active;
+    private Boolean active = true;
 
-    @PositiveOrZero(message = "Le montant minimum doit être >= 0")
+    @PositiveOrZero
     private Double minimumOrderAmount;
+
+    private Boolean used = false;
 }

@@ -11,6 +11,5 @@ public interface PaymentMapper {
 
     PaymentResponseDTO toDTO(Payment entity);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromDto(PaymentRequestDTO dto, @MappingTarget Payment entity);
+
 }

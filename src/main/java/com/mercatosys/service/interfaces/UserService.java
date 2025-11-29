@@ -10,7 +10,7 @@ public interface UserService {
 
     UserResponseDTO create(UserRequestDTO dto);
 
-    UserResponseDTO update(Long id, UserUpdateDTO dto);
+    UserResponseDTO update(Long id, UserRequestDTO dto);
 
     void delete(Long id);
 

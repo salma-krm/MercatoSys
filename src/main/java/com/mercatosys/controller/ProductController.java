@@ -2,6 +2,7 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.product.ProductRequestDTO;
 import com.mercatosys.dto.product.ProductResponseDTO;
 import com.mercatosys.dto.product.ProductUpdateDTO;
+import com.mercatosys.dto.user.LoginResponseDTO;
 import com.mercatosys.service.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/product")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -19,7 +20,8 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@Validated @RequestBody ProductRequestDTO dto) {
-        return new ResponseEntity<>(productService.create(dto), HttpStatus.CREATED);
+        ProductResponseDTO response = productService.create(dto);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/{id}")
