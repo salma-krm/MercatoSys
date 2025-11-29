@@ -5,7 +5,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserRequestDTO {
 
     @NotBlank(message = "Le nom d'utilisateur est obligatoire")
@@ -17,6 +21,5 @@ public class UserRequestDTO {
     @Email(message = "Email invalide")
     @NotBlank(message = "L'email est obligatoire")
     private String email;
-
-    private Role role;
 }
+

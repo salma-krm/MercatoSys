@@ -1,9 +1,8 @@
 package com.mercatosys.enums;
 
-public enum PaymentMethod {
-    CASH,
-    CREDIT_CARD,
-    BANK_TRANSFER,
-    CHECK
-}
 
+public enum PaymentMethod {
+    ESPÈCES,        // CASH
+    CHÈQUE,         // CHECK
+    VIREMENT        // BANK TRANSFER
+}

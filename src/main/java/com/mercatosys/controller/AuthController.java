@@ -3,7 +3,8 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
 import com.mercatosys.dto.user.LoginRequestDTO;
-import com.mercatosys.service.AuthService;
+import com.mercatosys.dto.user.LoginResponseDTO;
+import com.mercatosys.service.interfaces.AuthService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ClientResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
-        ClientResponseDTO response = authService.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        LoginResponseDTO response = authService.login(request);
+        return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/logout")

@@ -1,4 +1,4 @@
-package com.mercatosys.service;
+package com.mercatosys.service.interfaces;
 
 import com.mercatosys.dto.user.UserRequestDTO;
 import com.mercatosys.dto.user.UserResponseDTO;
@@ -10,7 +10,7 @@ public interface UserService {
 
     UserResponseDTO create(UserRequestDTO dto);
 
-    UserResponseDTO update(Long id, UserUpdateDTO dto);
+    UserResponseDTO update(Long id, UserRequestDTO dto);
 
     void delete(Long id);
 

@@ -1,4 +1,4 @@
-package com.mercatosys.service;
+package com.mercatosys.service.interfaces;
 
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
@@ -8,9 +8,7 @@ import java.util.List;
 
 public interface ClientService {
 
-    ClientResponseDTO create(ClientRequestDTO dto);
-
-    ClientResponseDTO update(Long id, ClientUpdateDTO dto);
+    ClientResponseDTO update(Long id, ClientRequestDTO dto);
 
     void delete(Long id);
 

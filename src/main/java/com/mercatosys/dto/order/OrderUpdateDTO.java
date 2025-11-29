@@ -2,6 +2,7 @@ package com.mercatosys.dto.order;
 
 import com.mercatosys.dto.orderItem.OrderItemRequestDTO;
 import com.mercatosys.dto.payment.PaymentRequestDTO;
+import com.mercatosys.dto.payment.PaymentResponseDTO;
 import lombok.*;
 import java.util.List;
 
@@ -12,6 +13,6 @@ public class OrderUpdateDTO {
     private Long promoCodeId;
 
     private List<OrderItemRequestDTO> items;
+    private List<PaymentResponseDTO> payments;
 
-    private List<PaymentRequestDTO> payments;
 }

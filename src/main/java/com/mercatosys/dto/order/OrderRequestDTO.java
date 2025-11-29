@@ -16,6 +16,4 @@ public class OrderRequestDTO {
 
     @NotEmpty(message = "La commande doit contenir au moins un article")
     private List<OrderItemRequestDTO> items;
-
-    private List<PaymentRequestDTO> payments;
 }

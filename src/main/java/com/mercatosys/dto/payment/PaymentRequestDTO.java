@@ -1,16 +1,29 @@
 package com.mercatosys.dto.payment;
 
-
+import com.mercatosys.enums.PaymentMethod;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PaymentRequestDTO {
 
-    @NotBlank(message = "La méthode de paiement est obligatoire")
-    private String method;
+    @NotNull(message = "La méthode de paiement est obligatoire")
+    private PaymentMethod paymentType;
 
     @Positive(message = "Le montant doit être > 0")
-    private double amount;
+    private Double amount;
+
+    private LocalDateTime paymentDate;
+
+    private LocalDateTime depositDate;
+    private String reference;
+    private String bank;
+
+    private Long orderId;
 }

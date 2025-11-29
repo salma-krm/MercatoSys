@@ -3,7 +3,7 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.client.ClientRequestDTO;
 import com.mercatosys.dto.client.ClientResponseDTO;
 import com.mercatosys.dto.client.ClientUpdateDTO;
-import com.mercatosys.service.ClientService;
+import com.mercatosys.service.interfaces.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +21,13 @@ public class ClientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientResponseDTO createClient(@Valid @RequestBody ClientRequestDTO dto) {
-        return clientService.create(dto);
-    }
+//    public ClientResponseDTO createClient(@Valid @RequestBody ClientRequestDTO dto) {
+//        return clientService.create(dto);
+//    }
 
     @PutMapping("/{id}")
     public ClientResponseDTO updateClient(@PathVariable Long id,
-                                          @Valid @RequestBody ClientUpdateDTO dto) {
+                                          @Valid @RequestBody ClientRequestDTO dto) {
         return clientService.update(id, dto);
     }
 

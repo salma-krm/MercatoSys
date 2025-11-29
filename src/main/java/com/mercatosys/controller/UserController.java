@@ -3,7 +3,7 @@ package com.mercatosys.controller;
 import com.mercatosys.dto.user.UserRequestDTO;
 import com.mercatosys.dto.user.UserResponseDTO;
 import com.mercatosys.dto.user.UserUpdateDTO;
-import com.mercatosys.service.UserService;
+import com.mercatosys.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +43,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id,
-                                                      @Validated @RequestBody UserUpdateDTO dto) {
+                                                      @Validated @RequestBody UserRequestDTO dto) {
         UserResponseDTO updatedUser = userService.update(id, dto);
         return ResponseEntity.ok(updatedUser);
     }
