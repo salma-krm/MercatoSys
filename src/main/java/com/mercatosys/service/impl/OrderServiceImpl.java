@@ -161,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDTO(order);
     }
 
-    private double calculateLoyaltyDiscount(CustomerLevel level, double totalHT) {
+    double calculateLoyaltyDiscount(CustomerLevel level, double totalHT) {
         return switch (level) {
             case SILVER -> totalHT >= 500 ? totalHT * 0.05 : 0;
             case GOLD -> totalHT >= 800 ? totalHT * 0.10 : 0;
