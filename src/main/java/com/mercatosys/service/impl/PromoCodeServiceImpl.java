@@ -89,7 +89,7 @@ public class PromoCodeServiceImpl implements PromoCodeService {
                         "PromoCode introuvable avec ID = " + id
                 ));
 
-        promo.setActive(false); // soft delete via active
+        promo.setActive(false);
         repo.save(promo);
     }
 }
