@@ -1,5 +1,7 @@
 package com.mercatosys.service.interfaces;
 
+import com.mercatosys.dto.order.ClientOrderHistoryDTO;
+import com.mercatosys.dto.order.ClientOrderStatsDTO;
 import com.mercatosys.dto.order.OrderRequestDTO;
 import com.mercatosys.dto.order.OrderResponseDTO;
 
@@ -16,4 +18,6 @@ public interface OrderService {
     OrderResponseDTO getOrderById(Long id);
 
     List<OrderResponseDTO> getAllOrders();
+    ClientOrderStatsDTO getClientOrderStats(Long clientId);
+    List<ClientOrderHistoryDTO> getClientOrderHistory(Long clientId);
 }

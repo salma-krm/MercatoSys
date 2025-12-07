@@ -21,27 +21,27 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer paymentNumber; // numéro de paiement unique
+    private Integer paymentNumber;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentType; // ESPÈCES, CHEQUE, VIREMENT
+    private PaymentMethod paymentType;
 
     @Positive(message = "Le montant doit être > 0")
     private Double amount;
 
-    private LocalDateTime paymentDate; // date du paiement
+    private LocalDateTime paymentDate;
 
-    private LocalDateTime depositDate; // date de dépôt pour chèque/virement
+    private LocalDateTime depositDate;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status; // PENDING, RECEIVED
+    private PaymentStatus status;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private Order order; // commande associée
+    private Order order;
 
-    private String reference; // référence chèque ou virement
+    private String reference;
 
-    private String bank; // banque du chèque ou virement
+    private String bank;
 
 }

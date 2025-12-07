@@ -11,6 +11,6 @@ public interface AuthService {
 
     public void  logout(String id);
     public LoginResponseDTO login(LoginRequestDTO request);
-    public ClientResponseDTO register(ClientRequestDTO request);
+
 
 }

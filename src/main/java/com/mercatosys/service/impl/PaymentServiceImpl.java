@@ -31,70 +31,77 @@ public class PaymentServiceImpl implements PaymentService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande " + orderId + " introuvable"));
 
-        double totalTTC = order.getTotalTTC();
-        double totalPaid = order.getPayments().stream()
-                .mapToDouble(Payment::getAmount)
-                .sum();
+        double totalPaid = order.getPayments().stream().mapToDouble(Payment::getAmount).sum();
+        double remaining = round(order.getTotalTTC() - totalPaid);
+        double amount = round(dto.getAmount());
 
-        double remainingAmount = Math.round((totalTTC - totalPaid) * 100.0) / 100.0;
-        double paymentAmount = Math.round(dto.getAmount() * 100.0) / 100.0;
+        validatePayment(dto, amount, remaining);
 
-        if (paymentAmount <= 0) {
-            throw new IllegalArgumentException("Le montant du paiement doit être supérieur à 0");
-        }
+        Payment payment = buildPayment(order, dto, amount);
+        payment.setStatus(resolvePaymentStatus(dto, payment));
 
-        if (paymentAmount > remainingAmount) {
-            throw new IllegalArgumentException("Le montant dépasse le restant dû (" + remainingAmount + " DH)");
-        }
+        Payment saved = paymentRepository.save(payment);
 
-        if (dto.getPaymentType() == PaymentMethod.ESPÈCES && paymentAmount > 20000) {
+        updateOrderStatusIfFullyPaid(order, totalPaid + amount);
+
+        return toDTO(saved);
+    }
+
+    private void validatePayment(PaymentRequestDTO dto, double amount, double remaining) {
+        if (amount <= 0) throw new IllegalArgumentException("Le montant doit être > 0");
+        if (amount > remaining) throw new IllegalArgumentException("Le montant dépasse le restant dû (" + remaining + " DH)");
+
+        if (dto.getPaymentType() == PaymentMethod.ESPÈCES && amount > 20000) {
             throw new IllegalArgumentException("Le paiement en espèces ne peut dépasser 20,000 DH");
         }
+    }
 
-        Payment payment = Payment.builder()
+    private PaymentStatus resolvePaymentStatus(PaymentRequestDTO dto, Payment payment) {
+        return switch (dto.getPaymentType()) {
+            case ESPÈCES -> PaymentStatus.COMPLETED;
+            case CHÈQUE -> PaymentStatus.PENDING;
+            case VIREMENT -> (payment.getDepositDate() != null && !payment.getDepositDate().isAfter(LocalDateTime.now()))
+                    ? PaymentStatus.COMPLETED
+                    : PaymentStatus.PENDING;
+        };
+    }
+
+    private Payment buildPayment(Order order, PaymentRequestDTO dto, double amount) {
+        return Payment.builder()
                 .order(order)
                 .paymentType(dto.getPaymentType())
-                .amount(paymentAmount)
+                .amount(amount)
                 .paymentDate(dto.getPaymentDate() != null ? dto.getPaymentDate() : LocalDateTime.now())
                 .depositDate(dto.getDepositDate())
                 .reference(dto.getReference())
                 .bank(dto.getBank())
                 .status(PaymentStatus.PENDING)
                 .build();
+    }
 
-        switch (dto.getPaymentType()) {
-            case ESPÈCES -> payment.setStatus(PaymentStatus.COMPLETED);
-            case CHÈQUE -> payment.setStatus(PaymentStatus.PENDING);
-            case VIREMENT -> {
-                if (dto.getDepositDate() != null && !dto.getDepositDate().isAfter(LocalDateTime.now())) {
-                    payment.setStatus(PaymentStatus.COMPLETED);
-                } else {
-                    payment.setStatus(PaymentStatus.PENDING);
-                }
-            }
-        }
-
-        Payment savedPayment = paymentRepository.save(payment);
-
-        totalPaid += paymentAmount;
-        totalPaid = Math.round(totalPaid * 100.0) / 100.0;
-
-        if (totalPaid >= totalTTC) {
+    private void updateOrderStatusIfFullyPaid(Order order, double newTotalPaid) {
+        if (round(newTotalPaid) >= order.getTotalTTC()) {
             order.setStatus(OrderStatus.PAID);
             orderRepository.save(order);
         }
+    }
 
+    private PaymentResponseDTO toDTO(Payment p) {
         return PaymentResponseDTO.builder()
-                .id(savedPayment.getId())
-                .paymentNumber(savedPayment.getPaymentNumber())
-                .paymentType(savedPayment.getPaymentType())
-                .amount(savedPayment.getAmount())
-                .paymentDate(savedPayment.getPaymentDate())
-                .depositDate(savedPayment.getDepositDate())
-                .status(savedPayment.getStatus())
-                .reference(savedPayment.getReference())
-                .bank(savedPayment.getBank())
-                .orderId(order.getId())
+                .id(p.getId())
+                .paymentNumber(p.getPaymentNumber())
+                .paymentType(p.getPaymentType())
+                .amount(p.getAmount())
+                .paymentDate(p.getPaymentDate())
+                .depositDate(p.getDepositDate())
+                .status(p.getStatus())
+                .reference(p.getReference())
+                .bank(p.getBank())
+                .orderId(p.getOrder().getId())
                 .build();
+    }
+
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 }
