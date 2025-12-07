@@ -22,7 +22,9 @@ public class Product {
 
     @NotBlank(message = "La catégorie est obligatoire")
     private String category;
-
+    @NotNull
+    @Builder.Default
+    private Boolean active = true;
     @PositiveOrZero(message = "Le stock doit être >= 0")
     private int stock;
 }

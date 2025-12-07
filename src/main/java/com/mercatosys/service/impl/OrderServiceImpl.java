@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final ClientRepository clientRepository;
     private final ProductRepository productRepository;
     private final PromoCodeRepository promoCodeRepository;
+
     private final OrderMapper orderMapper;
 
     @Value("${app.tva.rate}")
@@ -275,5 +277,6 @@ public class OrderServiceImpl implements OrderService {
                 ))
                 .toList();
     }
+
 
 }

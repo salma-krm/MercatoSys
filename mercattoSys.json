@@ -1,0 +1,463 @@
+{
+  "info": {
+    "_postman_id": "mercatosys-api-collection",
+    "name": "Mercatosys - API Collection",
+    "description": "Collection Postman pour Mercatosys (auth, clients, produits, promos, commandes, paiements)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (POST /api/auth/register)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ma Société\",\n  \"phone\": \"+33123456789\",\n  \"address\": \"10 Rue Exemple, Paris\",\n  \"user\": { \"username\": \"client1\", \"email\": \"client1@example.com\", \"password\": \"Password123\" }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (POST /api/auth/login)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"client1@example.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout (POST /api/auth/logout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Register Client (POST /api/clients/register)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"client1\",\n  \"password\": \"password123\",\n  \"email\": \"client1@example.com\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clients/register", "host": ["{{baseUrl}}"], "path": ["api", "clients", "register"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Client (POST /api/clients)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nouvel Client\",\n  \"phone\": \"+33600112233\",\n  \"address\": \"5 Rue Nouvelle, Marseille\",\n  \"user\": { \"username\": \"newclient\", \"email\": \"newclient@example.com\", \"password\": \"Secret123\" }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Clients (GET /api/clients)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Client By ID (GET /api/clients/{{id}})",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "clients", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Client (PUT /api/clients/{{id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Client Modifié\",\n  \"phone\": \"+33987654321\",\n  \"address\": \"20 Rue Modif, Lyon\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clients/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "clients", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Client (DELETE /api/clients/{{id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "clients", "{{id}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product (POST /api/products)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptop Dell XPS 15\",\n  \"description\": \"Ordinateur portable haute performance\",\n  \"unitPrice\": 15000.00,\n  \"availableStock\": 50,\n  \"category\": \"ELECTRONICS\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Products (GET /api/products)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product By ID (GET /api/products/{{id}})",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/products/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "products", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product (PUT /api/products/{{id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptop Dell XPS 15 Updated\",\n  \"description\": \"Prix réduit\",\n  \"unitPrice\": 13500.00,\n  \"availableStock\": 45,\n  \"category\": \"ELECTRONICS\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "products", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product (DELETE /api/products/{{id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/products/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "products", "{{id}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Promo Codes",
+      "item": [
+        {
+          "name": "Create Promo Code (POST /api/promo-codes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PROMO-A1B2\",\n  \"discountPercentage\": 15.0,\n  \"active\": true,\n  \"uniqueUsage\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/promo-codes", "host": ["{{baseUrl}}"], "path": ["api", "promo-codes"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Promo Codes (GET /api/promo-codes)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/promo-codes", "host": ["{{baseUrl}}"], "path": ["api", "promo-codes"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Promo Code By ID (GET /api/promo-codes/{{id}})",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/promo-codes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "promo-codes", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Promo Code (PUT /api/promo-codes/{{id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PROMO-A1B2\",\n  \"discountPercentage\": 20.0,\n  \"active\": true,\n  \"uniqueUsage\": false\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/promo-codes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "promo-codes", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Promo Code (DELETE /api/promo-codes/{{id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/promo-codes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "promo-codes", "{{id}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order (POST /api/orders)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 1,\n  \"items\": [ { \"productId\": 1, \"quantity\": 2 }, { \"productId\": 2, \"quantity\": 1 } ],\n  \"promoCode\": \"PROMO-A1B2\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order By ID (GET /api/orders/{{id}})",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order (PUT /api/orders/{{id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 1,\n  \"items\": [ { \"productId\": 1, \"quantity\": 3 } ],\n  \"promoCode\": null\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{id}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Order (POST /api/orders/{{id}}/confirm)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{id}}/confirm", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{id}}", "confirm"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order (POST /api/orders/{{id}}/cancel)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{id}}/cancel", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{id}}", "cancel"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Order (DELETE /api/orders/{{id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Session-Id", "value": "{{sessionId}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{id}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment (POST /api/payments)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Session-Id", "value": "{{sessionId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": 1,\n  \"amount\": 5000.00,\n  \"paymentType\": \"CASH\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/payments", "host": ["{{baseUrl}}"], "path": ["api", "payments"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "item": [
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Create User (POST /api/users)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Session-Id", "value": "{{sessionId}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"Password123\",\n  \"roles\": [\"ROLE_USER\"]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "users"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Users (GET /api/users)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Session-Id", "value": "{{sessionId}}" }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "users"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User By ID (GET /api/users/{{id}})",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Session-Id", "value": "{{sessionId}}" }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{id}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "users", "{{id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User (PUT /api/users/{{id}})",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Session-Id", "value": "{{sessionId}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updated@example.com\",\n  \"roles\": [\"ROLE_USER\"]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{id}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "users", "{{id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User (DELETE /api/users/{{id}})",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Session-Id", "value": "{{sessionId}}" }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{id}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "users", "{{id}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

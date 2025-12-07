@@ -5,6 +5,7 @@ import com.mercatosys.Exception.StockException;
 import com.mercatosys.dto.product.ProductRequestDTO;
 import com.mercatosys.dto.product.ProductResponseDTO;
 import com.mercatosys.dto.product.ProductUpdateDTO;
+import com.mercatosys.repositories.OrderItemRepository;
 import com.mercatosys.repositories.ProductRepository;
 import com.mercatosys.service.interfaces.ProductService;
 
@@ -23,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public ProductResponseDTO create(ProductRequestDTO dto) {
@@ -50,13 +52,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+
     public void delete(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Produit introuvable: " + id);
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produit introuvable: " + id));
+
+        boolean isUsed = orderItemRepository.existsByProductId(id);
+
+        if (isUsed) {
+
+            product.setActive(false);
+            productRepository.save(product);
+        } else {
+
+            productRepository.deleteById(id);
         }
-
-        productRepository.deleteById(id);
-
     }
 
     @Override

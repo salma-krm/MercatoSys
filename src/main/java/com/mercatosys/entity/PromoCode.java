@@ -35,7 +35,7 @@ public class PromoCode {
 
     @NotNull
     @Builder.Default
-    private Boolean active = true; // ✅ soft delete avec ce champ
+    private Boolean active = true;
 
     @PositiveOrZero(message = "Le montant minimum doit être >= 0")
     private Double minimumOrderAmount;

@@ -11,6 +11,8 @@ import com.mercatosys.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -23,9 +25,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO create(UserRequestDTO dto) {
         User user = userMapper.toEntity(dto);
+        String encodedPassword = encodePassword(dto.getPassword());
+        user.setPassword(encodedPassword);
+
         user = userRepository.save(user);
         return userMapper.toResponseDTO(user);
     }
+
 
     @Override
     public UserResponseDTO update(Long id, UserRequestDTO dto) {
@@ -57,5 +63,13 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(userMapper::toResponseDTO)
                 .toList();
+    }
+    private String encodePassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            return Base64.getEncoder().encodeToString(md.digest(password.getBytes()));
+        } catch (Exception e) {
+            throw new RuntimeException("Error encoding password");
+        }
     }
 }

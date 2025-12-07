@@ -11,7 +11,7 @@ import com.mercatosys.entity.Client;
 import com.mercatosys.entity.User;
 import com.mercatosys.enums.CustomerLevel;
 import com.mercatosys.enums.Role;
-import com.mercatosys.mapper.AuthMapper;
+
 import com.mercatosys.mapper.ClientMapper;
 import com.mercatosys.mapper.UserMapper;
 import com.mercatosys.repositories.ClientRepository;
@@ -36,39 +36,39 @@ public class AuthServiceImpl implements AuthService {
     private final SessionManager sessionManager;
     private final UserMapper userMapper;
 
-    // ------------------- REGISTER -------------------
-    @Transactional
-    @Override
-    public ClientResponseDTO register(ClientRequestDTO request) {
 
-        if (userRepository.existsByEmail(request.getUser().getEmail())) {
-            throw new DuplicateResourceException("This email is already in use");
-        }
-
-        User user = User.builder()
-                .username(request.getUser().getUsername())
-                .email(request.getUser().getEmail())
-                .password(encodePassword(request.getUser().getPassword()))
-                .role(Role.CLIENT)
-                .build();
-
-        User savedUser = userRepository.save(user);
-
-        Client client = Client.builder()
-                .name(request.getName())
-                .phone(request.getPhone())
-                .address(request.getAddress())
-                .user(savedUser)
-                .level(CustomerLevel.BASIC)
-                .totalOrder(0)
-                .totalSpent(0.0)
-                .build();
-
-        Client savedClient = clientRepository.save(client);
-        log.info("New client registered: {} ", savedClient.getId());
-
-        return clientMapper.toResponseDTO(savedClient);
-    }
+//    @Transactional
+//    @Override
+//    public ClientResponseDTO register(ClientRequestDTO request) {
+//
+//        if (userRepository.existsByEmail(request.getUser().getEmail())) {
+//            throw new DuplicateResourceException("This email is already in use");
+//        }
+//
+//        User user = User.builder()
+//                .username(request.getUser().getUsername())
+//                .email(request.getUser().getEmail())
+//                .password(encodePassword(request.getUser().getPassword()))
+//                .role(Role.CLIENT)
+//                .build();
+//
+//        User savedUser = userRepository.save(user);
+//
+//        Client client = Client.builder()
+//                .name(request.getName())
+//                .phone(request.getPhone())
+//                .address(request.getAddress())
+//                .user(savedUser)
+//                .level(CustomerLevel.BASIC)
+//                .totalOrder(0)
+//                .totalSpent(0.0)
+//                .build();
+//
+//        Client savedClient = clientRepository.save(client);
+//
+//
+//        return clientMapper.toResponseDTO(savedClient);
+//    }
 
 
 
@@ -100,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
         sessionManager.invalidateSession(sessionId);
     }
 
-    // ------------------- PASSWORD UTILS -------------------
+
     private String encodePassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/promocodes")
+@RequestMapping("/api/promocodes")
 @RequiredArgsConstructor
 @Tag(name = "Promo Codes", description = "Management of promo codes")
 public class PromoCodeController {
