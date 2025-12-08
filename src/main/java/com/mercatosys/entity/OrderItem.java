@@ -3,16 +3,16 @@ package com.mercatosys.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "order_items")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
-public class OrderItem {
+@NoArgsConstructor @AllArgsConstructor
+@SuperBuilder
+public class OrderItem  extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
 
     @Positive(message = "La quantité doit être supérieure à 0")
     private int quantity;

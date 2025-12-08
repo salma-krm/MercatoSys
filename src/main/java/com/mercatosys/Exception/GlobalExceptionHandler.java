@@ -48,14 +48,14 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    //  400 - Business logic error
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
         log.warn("Business error: {}", ex.getMessage());
         return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    //  400 - Validation errors (DTO @Valid)
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         log.error("Validation error: {}", ex.getMessage());

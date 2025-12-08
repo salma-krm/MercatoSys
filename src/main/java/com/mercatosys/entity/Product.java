@@ -3,16 +3,15 @@ package com.mercatosys.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "products")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
-public class Product {
+@NoArgsConstructor @AllArgsConstructor @SuperBuilder
+public class Product extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
 
     @NotBlank(message = "Le nom du produit est obligatoire")
     private String name;

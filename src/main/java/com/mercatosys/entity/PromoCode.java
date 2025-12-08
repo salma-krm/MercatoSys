@@ -3,6 +3,8 @@ package com.mercatosys.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 @Entity
 @Table(name = "promo_codes")
@@ -10,12 +12,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class PromoCode {
+@SuperBuilder
+public class PromoCode  extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotBlank(message = "Le code promo est obligatoire")
     @Pattern(regexp = "PROMO-[A-Z0-9]{4}", message = "Format invalide : doit être PROMO-XXXX")

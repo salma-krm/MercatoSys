@@ -23,20 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public class AuthController {
 
     private final AuthService authService;
-//
-//    @Operation(summary = "Inscription d'un nouveau client",
-//            description = "Créer un compte client et retourne les informations créées.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "Client créé avec succès"),
-//            @ApiResponse(responseCode = "400", description = "Données invalides")
-//    })
-//        @RequireAuth
-//    @RequireRole("ADMIN")
-//    @PostMapping("/register")
-//    public ResponseEntity<ClientResponseDTO> register(@Valid @RequestBody ClientRequestDTO request) {
-//        ClientResponseDTO response = authService.register(request);
-//        return ResponseEntity.status(201).body(response);
-//    }
+
 
     @Operation(summary = "Connexion utilisateur",
             description = "Retourne le token ou la session après authentification.")
