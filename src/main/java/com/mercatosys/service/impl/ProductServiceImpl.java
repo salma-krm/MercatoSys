@@ -8,8 +8,8 @@ import com.mercatosys.dto.product.ProductUpdateDTO;
 import com.mercatosys.repositories.OrderItemRepository;
 import com.mercatosys.repositories.ProductRepository;
 import com.mercatosys.service.interfaces.ProductService;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 import com.mercatosys.entity.Product;
@@ -17,6 +17,8 @@ import com.mercatosys.mapper.ProductMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -78,10 +80,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDTO> getAll() {
-        return productRepository.findAll()
-                .stream()
+    public Page<ProductResponseDTO> getAll(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(productMapper::toResponseDTO);
+    }
+
+    public List<ProductResponseDTO> getAllProduct() {
+        List<Product> products = productRepository.findByPriceGreaterThan(1000);
+        return products.stream()
                 .map(productMapper::toResponseDTO)
                 .toList();
     }
+
 }

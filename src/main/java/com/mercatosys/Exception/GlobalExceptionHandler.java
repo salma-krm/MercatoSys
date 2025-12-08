@@ -102,4 +102,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(error);
     }
+    @ExceptionHandler(InvalidPaymentException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPayment(InvalidPaymentException ex) {
+        log.warn("Invalid payment: {}", ex.getMessage());
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

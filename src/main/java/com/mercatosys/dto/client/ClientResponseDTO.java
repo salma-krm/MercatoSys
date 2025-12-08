@@ -3,6 +3,8 @@ package com.mercatosys.dto.client;
 import com.mercatosys.enums.CustomerLevel;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +21,5 @@ public class ClientResponseDTO {
     private int totalOrder;
     private double totalSpent;
     private CustomerLevel level;
+    private LocalDateTime createdAt;
 }

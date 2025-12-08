@@ -1,5 +1,7 @@
 package com.mercatosys.controller;
 
+import com.mercatosys.annotation.RequireAuth;
+import com.mercatosys.annotation.RequireRole;
 import com.mercatosys.dto.order.ClientOrderHistoryDTO;
 import com.mercatosys.dto.order.ClientOrderStatsDTO;
 import com.mercatosys.service.impl.SessionManager;
@@ -17,10 +19,11 @@ public class ClientOrderController {
 
     private final OrderService orderService;
     private final SessionManager sessionManager;
-
+    @RequireAuth
+    @RequireRole("CLIENT")
     @GetMapping("/stats")
     public ResponseEntity<ClientOrderStatsDTO> getStats(
-            @RequestHeader("sessionId") String sessionId
+            @RequestHeader("Session-Id") String sessionId
     ) {
         Long clientId = sessionManager.getUserIdBySessionId(sessionId);
 
@@ -30,10 +33,11 @@ public class ClientOrderController {
 
         return ResponseEntity.ok(orderService.getClientOrderStats(clientId));
     }
-
+    @RequireAuth
+    @RequireRole("CLIENT")
     @GetMapping("/history")
     public ResponseEntity<List<ClientOrderHistoryDTO>> getHistory(
-            @RequestHeader("sessionId") String sessionId
+            @RequestHeader("Session-Id") String sessionId
     ) {
         Long clientId = sessionManager.getUserIdBySessionId(sessionId);
 

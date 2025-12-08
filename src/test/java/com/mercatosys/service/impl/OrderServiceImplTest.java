@@ -88,7 +88,7 @@ class OrderServiceImplTest {
                     .id(o.getId())
                     .totalHT(o.getTotalHT())
                     .totalTTC(o.getTotalTTC())
-                    .status(o.getStatus()) // enum مباشرة
+                    .status(o.getStatus())
                     .build();
         });
 

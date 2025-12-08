@@ -3,8 +3,9 @@ package com.mercatosys.service.interfaces;
 import com.mercatosys.dto.product.ProductRequestDTO;
 import com.mercatosys.dto.product.ProductResponseDTO;
 import com.mercatosys.dto.product.ProductUpdateDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface ProductService {
 
@@ -16,5 +17,5 @@ public interface ProductService {
 
     ProductResponseDTO getById(Long id);
 
-    List<ProductResponseDTO> getAll();
+    Page<ProductResponseDTO> getAll(Pageable pageable);
 }

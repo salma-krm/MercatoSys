@@ -13,4 +13,5 @@ public class PromoCodeUpdateDTO {
     private Boolean active;
     private Double minimumOrderAmount;
     private Boolean used;
+    private LocalDateTime updatedAt;
 }

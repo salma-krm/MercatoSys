@@ -17,6 +17,7 @@ public class PaymentResponseDTO {
     private Integer paymentNumber;
     private PaymentMethod paymentType;
     private Double amount;
+    private LocalDateTime createdAt;
     private LocalDateTime paymentDate;
     private LocalDateTime depositDate;
     private PaymentStatus status;

@@ -8,7 +8,8 @@ import org.mapstruct.*;
 public interface PaymentMapper {
 
     Payment toEntity(PaymentRequestDTO dto);
-
+    @Mapping(source = "reference", target = "reference")
+    @Mapping(source = "paymentNumber", target = "paymentNumber")
     PaymentResponseDTO toDTO(Payment entity);
 
 

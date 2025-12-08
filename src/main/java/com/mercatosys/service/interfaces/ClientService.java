@@ -13,6 +13,7 @@ public interface ClientService {
     void delete(Long id);
 
     ClientResponseDTO getById(Long id);
+    ClientResponseDTO getProfile(String sessionId);
 
     List<ClientResponseDTO> getAll();
     public ClientResponseDTO create(ClientRequestDTO request);

@@ -9,7 +9,8 @@ public interface OrderItemMapper {
 
 
     OrderItem toEntity(OrderItemRequestDTO dto);
-
+    @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "product.name", target = "productName")
     OrderItemResponseDTO toDTO(OrderItem entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

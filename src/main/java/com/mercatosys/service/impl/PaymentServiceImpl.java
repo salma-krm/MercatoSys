@@ -1,5 +1,6 @@
 package com.mercatosys.service.impl;
 
+import com.mercatosys.Exception.InvalidPaymentException;
 import com.mercatosys.Exception.ResourceNotFoundException;
 import com.mercatosys.dto.payment.PaymentRequestDTO;
 import com.mercatosys.dto.payment.PaymentResponseDTO;
@@ -26,6 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
+
     public PaymentResponseDTO payOrder(Long orderId, PaymentRequestDTO dto) {
 
         Order order = orderRepository.findById(orderId)
@@ -33,27 +35,36 @@ public class PaymentServiceImpl implements PaymentService {
 
         double totalPaid = order.getPayments().stream().mapToDouble(Payment::getAmount).sum();
         double remaining = round(order.getTotalTTC() - totalPaid);
-        double amount = round(dto.getAmount());
 
-        validatePayment(dto, amount, remaining);
+        if (remaining <= 0) {
+            throw new InvalidPaymentException("Cette commande est déjà entièrement payée");
+        }
 
-        Payment payment = buildPayment(order, dto, amount);
+
+        double requestedAmount = round(dto.getAmount());
+        double amountToPay = requestedAmount > remaining ? remaining : requestedAmount;
+
+        validatePayment(dto, amountToPay, remaining);
+
+        Payment payment = buildPayment(order, dto, amountToPay);
         payment.setStatus(resolvePaymentStatus(dto, payment));
 
         Payment saved = paymentRepository.save(payment);
 
-        updateOrderStatusIfFullyPaid(order, totalPaid + amount);
+        updateOrderStatusIfFullyPaid(order, totalPaid + amountToPay);
 
         return toDTO(saved);
     }
 
+
     private void validatePayment(PaymentRequestDTO dto, double amount, double remaining) {
         if (amount <= 0) throw new IllegalArgumentException("Le montant doit être > 0");
-        if (amount > remaining) throw new IllegalArgumentException("Le montant dépasse le restant dû (" + remaining + " DH)");
+
 
         if (dto.getPaymentType() == PaymentMethod.ESPÈCES && amount > 20000) {
-            throw new IllegalArgumentException("Le paiement en espèces ne peut dépasser 20,000 DH");
+            throw new InvalidPaymentException("Le paiement en espèces ne peut dépasser 20,000 DH");
         }
+
     }
 
     private PaymentStatus resolvePaymentStatus(PaymentRequestDTO dto, Payment payment) {
@@ -67,9 +78,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Payment buildPayment(Order order, PaymentRequestDTO dto, double amount) {
+        int nextPaymentNumber = order.getPayments().size() + 1;
         return Payment.builder()
                 .order(order)
                 .paymentType(dto.getPaymentType())
+                .paymentNumber(nextPaymentNumber)
                 .amount(amount)
                 .paymentDate(dto.getPaymentDate() != null ? dto.getPaymentDate() : LocalDateTime.now())
                 .depositDate(dto.getDepositDate())
@@ -89,6 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentResponseDTO toDTO(Payment p) {
         return PaymentResponseDTO.builder()
                 .id(p.getId())
+
                 .paymentNumber(p.getPaymentNumber())
                 .paymentType(p.getPaymentType())
                 .amount(p.getAmount())
@@ -98,6 +112,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .reference(p.getReference())
                 .bank(p.getBank())
                 .orderId(p.getOrder().getId())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

@@ -3,6 +3,8 @@ package com.mercatosys.dto.product;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class ProductUpdateDTO {
@@ -15,7 +17,7 @@ public class ProductUpdateDTO {
 
     @NotBlank(message = "La catégorie est obligatoire")
     private String category;
-
+    private LocalDateTime updatedAt;
     @PositiveOrZero(message = "Le stock doit être >= 0")
     private int stock;
 }

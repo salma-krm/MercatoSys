@@ -60,19 +60,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
+
     @Override
     public OrderResponseDTO confirmOrder(Long orderId) {
         Order order = fetchOrder(orderId);
 
-        if (order.getStatus() != OrderStatus.PENDING)
-            throw new IllegalStateException("La commande n'est pas en statut PENDING");
+        if (order.getStatus() != OrderStatus.PAID)
+            throw new IllegalStateException("La commande n'est pas en statut PAID");
 
         validateFullPayment(order);
 
         order.setStatus(OrderStatus.CONFIRMED);
 
-        updateClientLevel(order.getClient());
-        clientRepository.save(order.getClient());
+
+        Client client = order.getClient();
+        client.setTotalOrder(client.getTotalOrder() + 1);
+        client.setTotalSpent(client.getTotalSpent() + order.getTotalTTC());
+        updateClientLevel(client);
+        clientRepository.save(client);
 
         orderRepository.save(order);
         return orderMapper.toDTO(order);

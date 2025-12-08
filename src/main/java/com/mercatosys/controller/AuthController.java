@@ -1,6 +1,7 @@
 package com.mercatosys.controller;
 
 
+import com.mercatosys.annotation.RequireAuth;
 import com.mercatosys.dto.user.LoginRequestDTO;
 import com.mercatosys.dto.user.LoginResponseDTO;
 import com.mercatosys.service.interfaces.AuthService;
@@ -11,38 +12,24 @@ import jakarta.validation.Valid;
 import java.util.Map;
 
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "Gestion de l'authentification")
+
 public class AuthController {
 
     private final AuthService authService;
 
 
-    @Operation(summary = "Connexion utilisateur",
-            description = "Retourne le token ou la session après authentification.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Connexion réussie"),
-            @ApiResponse(responseCode = "401", description = "Identifiants incorrects")
-    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         LoginResponseDTO response = authService.login(request);
         return ResponseEntity.status(201).body(response);
     }
 
-    @Operation(summary = "Déconnexion utilisateur",
-            description = "Ferme la session active de l'utilisateur.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Déconnexion réussie"),
-            @ApiResponse(responseCode = "400", description = "Session inexistante")
-    })
+@RequireAuth
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(@RequestHeader("Session-Id") String sessionId) {
         authService.logout(sessionId);

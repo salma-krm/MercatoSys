@@ -28,6 +28,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final ClientMapper clientMapper;
+    private final SessionManager sessionManager;
 
 
     @Transactional
@@ -109,4 +110,22 @@ public class ClientServiceImpl implements ClientService {
             throw new RuntimeException("Error encoding password");
         }
     }
+    @Override
+
+    public ClientResponseDTO getProfile(String sessionId) {
+
+
+        Long userId = sessionManager.getUserIdBySessionId(sessionId);
+        if (userId == null) {
+            throw new IllegalStateException("Session invalide ou expirée");
+        }
+
+
+        Client client = clientRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé"));
+
+        return clientMapper.toResponseDTO(client);
+    }
+
+
 }

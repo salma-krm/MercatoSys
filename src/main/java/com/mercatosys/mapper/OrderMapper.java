@@ -10,7 +10,8 @@ public interface OrderMapper {
 
 
     Order toEntity(OrderRequestDTO dto);
-
+    @Mapping(source = "client.id", target = "clientId")
+    @Mapping(source = "promoCode", target = "promoCode")
     OrderResponseDTO toDTO(Order entity);
 
     List<OrderResponseDTO> toDTOs(List<Order> orders);
